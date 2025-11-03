@@ -23,6 +23,7 @@ fcoeff = 3.14
 # COLOUR CODES FOR TEST RESULTS
 GREEN = "\033[92m"
 RED = "\033[91m"
+YELLOW = "\033[93m"
 END = "\033[0m"
 
 

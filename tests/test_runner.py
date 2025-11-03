@@ -24,14 +24,14 @@ import time
 # Try importing directly first (if package is installed)
 try:
     from nbody.misc import time_function
-    from nbody.constants import GREEN, RED, END
+    from nbody.constants import GREEN, RED, YELLOW, END
 except ImportError:
     # If not installed, add src to path
     test_dir = Path(__file__).parent
     src_dir = test_dir.parent / 'src'
     sys.path.insert(0, str(src_dir))
     from nbody.misc import time_function
-    from nbody.constants import GREEN, RED, END
+    from nbody.constants import GREEN, RED, YELLOW, END
 
 
 def discover_tests(module=None):
@@ -68,13 +68,15 @@ def discover_tests(module=None):
     return [(name, func) for _, name, func in tests]
 
 
-def run_tests(test_name_prefix: str = "Testing", module=None) -> Dict[str, bool]:
+def run_tests(test_name_prefix: str = "Testing", module=None, run_only: list = None) -> Dict[str, bool]:
     """
     Run all test functions discovered in the calling module and format output.
     
     Args:
         test_name_prefix: Prefix for the test suite name in output.
         module: The module to search for tests. If None, uses the calling module.
+        run_only: Optional list of test function names to run. If None, runs all tests.
+                  Can be specified with or without 'test_' prefix (e.g., ['no_bodies', 'test_one_body']).
     
     Returns:
         Dictionary mapping test names to their success status.
@@ -85,6 +87,37 @@ def run_tests(test_name_prefix: str = "Testing", module=None) -> Dict[str, bool]
         print(f"\n{RED}No test functions found!{END}")
         print("Make sure your test functions start with 'test_'")
         return {}
+    
+    # Filter tests if run_only is specified
+    if run_only is not None:
+        # Normalize the run_only list: ensure all names start with 'test_'
+        normalized_run_only = []
+        for name in run_only:
+            if name.startswith('test_'):
+                normalized_run_only.append(name)
+            else:
+                normalized_run_only.append(f'test_{name}')
+        
+        # Filter tests to only include requested ones
+        filtered_tests = []
+        run_only_set = set(normalized_run_only)
+        for test_name, test_func in tests:
+            if test_name in run_only_set:
+                filtered_tests.append((test_name, test_func))
+        
+        # Check if any requested tests weren't found
+        found_names = {name for name, _ in filtered_tests}
+        missing_names = run_only_set - found_names
+        if missing_names:
+            print(f"\n{YELLOW}Warning: The following tests were requested but not found:{END}")
+            for name in sorted(missing_names):
+                print(f"  - {name}")
+        
+        tests = filtered_tests
+        
+        if not tests:
+            print(f"\n{RED}No matching test functions found!{END}")
+            return {}
     
     # Get the module name for display
     if module is None:
