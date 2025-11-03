@@ -193,6 +193,7 @@ def partial():
 
 
 if __name__ == "__main__":
+    # TODO: verify the tests are correct
     run_tests(test_name_prefix="Testing closestDistance method")
     # partial()
 
