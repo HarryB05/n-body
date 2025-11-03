@@ -20,3 +20,9 @@ scoeff = 22.62
 # Freezing coefficient, approx. 2 AU from the Sun (L_sun/AU^2)
 fcoeff = 3.14
 
+# COLOUR CODES FOR TEST RESULTS
+GREEN = "\033[92m"
+RED = "\033[91m"
+END = "\033[0m"
+
+

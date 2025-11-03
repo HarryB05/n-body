@@ -49,8 +49,22 @@ class Simulation:
         Returns:
             Minimum distance between any two bodies over all timesteps
         """
-        # TODO: Implement this method
-        pass
+        if len(self.bodies) < 2:
+            return None
+
+        positions = self.run()
+
+        min_sq_distance = float('inf')
+
+        for timestep_bodies in positions:
+            for i in range(len(timestep_bodies)):
+                for j in range(i + 1, len(timestep_bodies)):
+                    sq_distance = timestep_bodies[i].squareDist(timestep_bodies[j])
+
+                    if sq_distance < min_sq_distance:
+                        min_sq_distance = sq_distance
+
+        return min_sq_distance ** 0.5
     
     def show(self, x0, y0, x1, y1):
         """
